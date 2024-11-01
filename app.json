@@ -18,6 +18,9 @@
       ]
     ],
     "name": "TVFocusTest",
-    "slug": "TVFocusTest"
+    "slug": "TVFocusTest",
+    "android": {
+      "package": "com.anonymous.TVFocusTest"
+    }
   }
 }
