@@ -7,14 +7,29 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ({ navigation, setIsMenuOpen }) => {
+  console.log("aquwie");
   // Sample data for the FlatList
   const data = [
     { id: "1", title: "Item 1" },
     { id: "2", title: "Item 2" },
     { id: "3", title: "Item 3" },
     { id: "4", title: "Item 4" },
+    { id: "5", title: "Item 5" },
+    { id: "6", title: "Item 6" },
+    { id: "7", title: "Item 7" },
+    { id: "8", title: "Item 8" },
+    { id: "9", title: "Item 9" },
+    { id: "10", title: "Item 10" },
+    { id: "11", title: "Item 11" },
+    { id: "12", title: "Item 12" },
   ];
+
+  const handleMenuTrigger = () => {
+    console.log("focusMenu");
+    setIsMenuOpen(true);
+    navigation.navigate("Menu");
+  };
 
   // Render each item in the FlatList
   const renderItem = ({ item }) => (
@@ -28,13 +43,20 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      {/* Invisible Menu Trigger */}
+      <View style={styles.menuTrigger}>
+        <TouchableOpacity onFocus={handleMenuTrigger} focusable={true}>
+          <Text>Menu</Text>
+        </TouchableOpacity>
+      </View>
+
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerText}>Home</Text>
       </View>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} hasTVPreferredFocus>
           <Text style={styles.buttonText}>Play</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button}>
@@ -98,7 +120,7 @@ const styles = StyleSheet.create({
   itemContainer: {
     padding: 16,
     backgroundColor: "#444",
-    marginRight: 8, // Adjust margin for horizontal spacing
+    marginRight: 8,
     borderRadius: 4,
     width: 150,
   },
@@ -106,6 +128,17 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 18,
     textAlign: "center",
+  },
+  menuTrigger: {
+    position: "absolute",
+    left: 3,
+    top: 300,
+    width: 40,
+    height: 60,
+    borderRadius: 4,
+    color: "#ffff",
+    alignContent: "center",
+    backgroundColor: "#333",
   },
 });
 
