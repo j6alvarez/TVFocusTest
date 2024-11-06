@@ -1,21 +1,41 @@
 import React from "react";
-import { View, Text, StyleSheet, Button } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
+import {
+  SpatialNavigationRoot,
+  SpatialNavigationView,
+  SpatialNavigationFocusableView,
+  DefaultFocus,
+} from "react-tv-space-navigation";
+import { Page } from "../components/Page";
 
 const DetailsScreen = ({ route, navigation }) => {
-  // Destructure the itemId from the route params
   const { itemId } = route.params;
 
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <Text style={styles.headerText}>Details Screen</Text>
+    <Page navigation={navigation}>
+      <View style={styles.container}>
+        {/* Header */}
+        <Text style={styles.headerText}>Details Screen</Text>
 
-      {/* Displaying the passed item ID */}
-      <Text style={styles.itemText}>Item ID: {itemId}</Text>
+        {/* Content */}
+        <Text style={styles.itemText}>Item ID: {itemId}</Text>
 
-      {/* Back Button */}
-      <Button title="Go Back" onPress={() => navigation.goBack()} />
-    </View>
+        {/* Back Button */}
+        <DefaultFocus>
+          <SpatialNavigationFocusableView
+            focusable={true}
+            hasTVPreferredFocus={true}
+            onSelect={() => navigation.goBack()}
+          >
+            {({ isFocused }) => (
+              <View style={[styles.button, isFocused && styles.buttonFocused]}>
+                <Text style={styles.buttonText}>Go Back</Text>
+              </View>
+            )}
+          </SpatialNavigationFocusableView>
+        </DefaultFocus>
+      </View>
+    </Page>
   );
 };
 
@@ -36,6 +56,20 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "#bbb",
     marginBottom: 20,
+  },
+  button: {
+    backgroundColor: "#444",
+    padding: 16,
+    borderRadius: 4,
+    width: 120,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 18,
+    textAlign: "center",
+  },
+  buttonFocused: {
+    backgroundColor: "#222",
   },
 });
 

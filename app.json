@@ -1,5 +1,10 @@
 {
   "expo": {
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
     "plugins": [
       "@bam.tech/react-native-keyevent-expo-config-plugin",
       [

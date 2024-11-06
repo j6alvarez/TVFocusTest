@@ -42,62 +42,41 @@ const App = () => {
     <NavigationContainer theme={navTheme}>
       <SpatialNavigationDeviceTypeProvider>
         <SpatialNavigationRoot>
-          {/* <View style={styles.container}>
           <MenuProvider>
-          <Stack.Navigator
-          initialRouteName="Home"
-          screenOptions={{
-            headerShown: false,
-            }}
+            <Stack.Navigator
+              initialRouteName="Home"
+              screenOptions={{
+                headerShown: false,
+              }}
             >
-            <>
-            <Stack.Group>
-            <Stack.Group key="menu">
-            <Stack.Screen
-            name="Menu"
-            options={{ presentation: "transparentModal" }}
-            >
-            {(props) => {
-              return (
-                <Menu
-                visible={isMenuOpen}
-                setIsMenuOpen={setIsMenuOpen}
-                {...props}
-                />
-                );
-                }}
-                </Stack.Screen>
-                </Stack.Group>
-                <Stack.Screen name="Home">
-                {(props) => {
-                  return (
-                    <HomeScreen
-                    setIsMenuOpen={setIsMenuOpen}
-                    isMenuOpen={isMenuOpen}
-                    {...props}
-                    />
-                    );
-                    }}
+              <>
+                <Stack.Group>
+                  <Stack.Group key="menu">
+                    <Stack.Screen
+                      name="Menu"
+                      options={{ presentation: "transparentModal" }}
+                    >
+                      {(props) => {
+                        return <Menu {...props} />;
+                      }}
                     </Stack.Screen>
+                  </Stack.Group>
+                  <Stack.Screen name="Home">
+                    {(props) => {
+                      return <HomeScreen {...props} />;
+                    }}
+                  </Stack.Screen>
                 </Stack.Group>
                 <Stack.Screen name="Details">
-                {(props) => (
-                  <SpatialNavigationRoot>
-                  <DetailsScreen {...props} />
-                  </SpatialNavigationRoot>
+                  {(props) => (
+                    <SpatialNavigationRoot>
+                      <DetailsScreen {...props} />
+                    </SpatialNavigationRoot>
                   )}
-                  </Stack.Screen>
-                  </>
-                  </Stack.Navigator>
-                  </MenuProvider>
-                  </View> */}
-          <DefaultFocus>
-            <SpatialNavigationView direction="horizontal">
-              <Element />
-
-              <Element />
-            </SpatialNavigationView>
-          </DefaultFocus>
+                </Stack.Screen>
+              </>
+            </Stack.Navigator>
+          </MenuProvider>
         </SpatialNavigationRoot>
       </SpatialNavigationDeviceTypeProvider>
     </NavigationContainer>

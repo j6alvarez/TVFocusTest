@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useCallback, useRef } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import {
   DefaultFocus,
@@ -9,12 +9,15 @@ import {
   SpatialNavigationRoot,
   SpatialNavigationScrollView,
 } from "react-tv-space-navigation";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { useMenuContext } from "../components/Menu/MenuContext";
 import { Page } from "../components/Page";
-import { Button } from "../components/Button";
+import { SupportedKeys } from "../components/remote-control/SupportedKeys";
+import { useKey } from "../hooks/useKey";
 
 const HomeScreen = ({ navigation }) => {
   const { toggleMenu: setIsMenuOpen, isOpen: isMenuOpen } = useMenuContext();
+  const listRef = useRef(null);
   const data = [
     { id: "1", title: "Item 1" },
     { id: "2", title: "Item 2" },
@@ -30,51 +33,96 @@ const HomeScreen = ({ navigation }) => {
     { id: "12", title: "Item 12" },
   ];
 
-  const handleMenuTrigger = () => {
-    setIsMenuOpen((prevState) => {
-      if (!prevState) {
-        navigation.navigate("Menu");
+  const isScreenFocused = useIsFocused();
+  const isActive = !isMenuOpen;
+
+  const goToFirstItem = useCallback(
+    (pressedKey) => {
+      const isBackKey = pressedKey === SupportedKeys.Back;
+      const isRowActive = isActive && isScreenFocused;
+      const isFirstElementFocused =
+        listRef.current?.currentlyFocusedItemIndex === 0;
+
+      if (!isBackKey || !isRowActive || isFirstElementFocused) {
+        return false;
       }
-      return !!prevState;
-    });
-  };
+
+      listRef.current?.focus(0);
+      return true;
+    },
+    [isActive, isScreenFocused, listRef]
+  );
+
+  useKey(SupportedKeys.Back, goToFirstItem);
 
   const renderItem = ({ item, index }) => (
     <SpatialNavigationNode key={index}>
       <SpatialNavigationFocusableView
-        style={styles.itemContainer}
         onSelect={() => navigation.navigate("Details", { itemId: item.id })}
       >
         {({ isFocused }) => (
-          <Text style={styles.itemText}>
-            {isFocused ? `${item.title} focused` : item.title}
-          </Text>
+          <View
+            style={[
+              styles.itemContainer,
+              isFocused && styles.itemContainerFocused,
+            ]}
+          >
+            <Text style={styles.itemText}>{item.title}</Text>
+          </View>
+        )}
+      </SpatialNavigationFocusableView>
+    </SpatialNavigationNode>
+  );
+
+  const buttons = [
+    {
+      title: "Play",
+      onSelect: () => console.log("playing"),
+    },
+    {
+      title: "Details",
+      onSelect: () => console.log("playing"),
+    },
+  ];
+
+  const renderButton = ({ item, index }) => (
+    <SpatialNavigationNode key={index}>
+      <SpatialNavigationFocusableView
+        onSelect={() => navigation.navigate("Details", { itemId: item.id })}
+      >
+        {({ isFocused }) => (
+          <View style={[styles.button, isFocused && styles.buttonFocused]}>
+            <Text style={styles.buttonText}>{item.title}</Text>
+          </View>
         )}
       </SpatialNavigationFocusableView>
     </SpatialNavigationNode>
   );
 
   return (
-    <Page>
-      <DefaultFocus>
+    <Page navigation={navigation}>
+      <View style={styles.container}>
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.headerText}>Home</Text>
+        </View>
         <SpatialNavigationScrollView>
-          {/* Invisible Menu Trigger */}
-          {/* <SpatialNavigationFocusableView
-          onFocus={handleMenuTrigger}
-          focusable={true}
-          style={styles.menuTrigger}
-          >
-          <View>
-          <Text>Menu</Text>
-          </View>
-          </SpatialNavigationFocusableView> */}
+          {/* Buttons */}
+          <DefaultFocus>
+            <View style={styles.buttonContainer}>
+              <SpatialNavigationVirtualizedList
+                data={buttons}
+                header={<></>}
+                renderItem={renderButton}
+                itemSize={200}
+                orientation="horizontal"
+                style={styles.list}
+                itemSpacing={5}
+              />
+            </View>
+          </DefaultFocus>
 
-          {/* Header */}
-
-          <Button label="Play" onSelect={() => console.log("Playing!")} />
-
-          <Button label="Details" onSelect={() => console.log("Playing!")} />
-
+          {/* List */}
           <View style={styles.listContainer}>
             <SpatialNavigationVirtualizedList
               data={data}
@@ -83,12 +131,13 @@ const HomeScreen = ({ navigation }) => {
               itemSize={200}
               orientation="horizontal"
               style={styles.list}
-              itemSpacing={20}
+              itemSpacing={15}
               scrollBehavior="stick-to-start"
+              ref={listRef}
             />
           </View>
         </SpatialNavigationScrollView>
-      </DefaultFocus>
+      </View>
     </Page>
   );
 };
@@ -103,12 +152,15 @@ const styles = StyleSheet.create({
   header: {
     padding: 16,
     backgroundColor: "#333",
+    marginBottom: 20,
   },
   headerText: {
     color: "#fff",
     fontSize: 24,
+    fontWeight: "bold",
   },
   buttonContainer: {
+    display: "flex",
     marginLeft: 50,
     marginTop: "20%",
     flexDirection: "row",
@@ -120,10 +172,16 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     width: 120,
   },
+  buttonFocused: {
+    backgroundColor: "#222",
+  },
   buttonText: {
     color: "#fff",
     fontSize: 18,
     textAlign: "center",
+  },
+  focusedText: {
+    color: "#00ff00",
   },
   listContainer: {
     position: "absolute",
@@ -142,6 +200,9 @@ const styles = StyleSheet.create({
     marginRight: 8,
     borderRadius: 4,
     width: 150,
+  },
+  itemContainerFocused: {
+    backgroundColor: "#222",
   },
   itemText: {
     color: "#fff",

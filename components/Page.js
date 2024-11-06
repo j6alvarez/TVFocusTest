@@ -6,6 +6,7 @@ import {
 } from "react-tv-space-navigation";
 import { useMenuContext } from "./Menu/MenuContext";
 import { Keyboard } from "react-native";
+import { GoBackConfiguration } from "./GoBackConfiguration";
 
 /**
  * Locks/unlocks the navigator when the native keyboard is shown/hidden.
@@ -31,7 +32,7 @@ const SpatialNavigationKeyboardLocker = () => {
   return null;
 };
 
-export const Page = ({ children }) => {
+export const Page = ({ navigation, children }) => {
   const isFocused = useIsFocused();
   const { isOpen: isMenuOpen, toggleMenu } = useMenuContext();
 
@@ -41,16 +42,20 @@ export const Page = ({ children }) => {
     (movement) => {
       if (movement === "left") {
         toggleMenu(true);
+        navigation.navigate("Menu");
       }
     },
-    [toggleMenu]
+    [toggleMenu, navigation]
   );
+
+  console.log("Page", { isActive, isMenuOpen });
 
   return (
     <SpatialNavigationRoot
       isActive={isActive}
       onDirectionHandledWithoutMovement={onDirectionHandledWithoutMovement}
     >
+      <GoBackConfiguration />
       <SpatialNavigationKeyboardLocker />
       {children}
     </SpatialNavigationRoot>

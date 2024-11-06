@@ -1,6 +1,6 @@
 import { Directions, SpatialNavigation } from "react-tv-space-navigation";
 import { SupportedKeys } from "./remote-control/SupportedKeys";
-import RemoteControlManager from "./remote-control/RemoteControlManager.android";
+import RemoteControlManager from "./remote-control/RemoteControlManager";
 
 SpatialNavigation.configureRemoteControl({
   remoteControlSubscriber: (callback) => {
