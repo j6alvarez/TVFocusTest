@@ -1,6 +1,13 @@
 {
   "expo": {
     "plugins": [
+      "@bam.tech/react-native-keyevent-expo-config-plugin",
+      [
+        "@react-native-tvos/config-tv",
+        {
+          "showVerboseWarnings": true
+        }
+      ],
       [
         "@react-native-tvos/config-tv",
         {

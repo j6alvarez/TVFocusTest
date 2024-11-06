@@ -1,15 +1,20 @@
-import React from "react";
+import React, { useMemo } from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-} from "react-native";
+  DefaultFocus,
+  SpatialNavigationNode,
+  SpatialNavigationView,
+  SpatialNavigationFocusableView,
+  SpatialNavigationVirtualizedList,
+  SpatialNavigationRoot,
+  SpatialNavigationScrollView,
+} from "react-tv-space-navigation";
+import { useMenuContext } from "../components/Menu/MenuContext";
+import { Page } from "../components/Page";
+import { Button } from "../components/Button";
 
-const HomeScreen = ({ navigation, setIsMenuOpen }) => {
-  console.log("aquwie");
-  // Sample data for the FlatList
+const HomeScreen = ({ navigation }) => {
+  const { toggleMenu: setIsMenuOpen, isOpen: isMenuOpen } = useMenuContext();
   const data = [
     { id: "1", title: "Item 1" },
     { id: "2", title: "Item 2" },
@@ -26,61 +31,73 @@ const HomeScreen = ({ navigation, setIsMenuOpen }) => {
   ];
 
   const handleMenuTrigger = () => {
-    console.log("focusMenu");
-    setIsMenuOpen(true);
-    navigation.navigate("Menu");
+    setIsMenuOpen((prevState) => {
+      if (!prevState) {
+        navigation.navigate("Menu");
+      }
+      return !!prevState;
+    });
   };
 
-  // Render each item in the FlatList
-  const renderItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.itemContainer}
-      onPress={() => navigation.navigate("Details", { itemId: item.id })}
-    >
-      <Text style={styles.itemText}>{item.title}</Text>
-    </TouchableOpacity>
+  const renderItem = ({ item, index }) => (
+    <SpatialNavigationNode key={index}>
+      <SpatialNavigationFocusableView
+        style={styles.itemContainer}
+        onSelect={() => navigation.navigate("Details", { itemId: item.id })}
+      >
+        {({ isFocused }) => (
+          <Text style={styles.itemText}>
+            {isFocused ? `${item.title} focused` : item.title}
+          </Text>
+        )}
+      </SpatialNavigationFocusableView>
+    </SpatialNavigationNode>
   );
 
   return (
-    <View style={styles.container}>
-      {/* Invisible Menu Trigger */}
-      <View style={styles.menuTrigger}>
-        <TouchableOpacity onFocus={handleMenuTrigger} focusable={true}>
+    <Page>
+      <DefaultFocus>
+        <SpatialNavigationScrollView>
+          {/* Invisible Menu Trigger */}
+          {/* <SpatialNavigationFocusableView
+          onFocus={handleMenuTrigger}
+          focusable={true}
+          style={styles.menuTrigger}
+          >
+          <View>
           <Text>Menu</Text>
-        </TouchableOpacity>
-      </View>
+          </View>
+          </SpatialNavigationFocusableView> */}
 
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Home</Text>
-      </View>
+          {/* Header */}
 
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} hasTVPreferredFocus>
-          <Text style={styles.buttonText}>Play</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Details</Text>
-        </TouchableOpacity>
-      </View>
+          <Button label="Play" onSelect={() => console.log("Playing!")} />
 
-      <View style={styles.listContainer}>
-        <FlatList
-          data={data}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.listContent}
-          showsHorizontalScrollIndicator={false}
-          horizontal={true} // Set this prop to render items horizontally
-        />
-      </View>
-    </View>
+          <Button label="Details" onSelect={() => console.log("Playing!")} />
+
+          <View style={styles.listContainer}>
+            <SpatialNavigationVirtualizedList
+              data={data}
+              header={<Text style={styles.headerText}>Featured Content</Text>}
+              renderItem={renderItem}
+              itemSize={200}
+              orientation="horizontal"
+              style={styles.list}
+              itemSpacing={20}
+              scrollBehavior="stick-to-start"
+            />
+          </View>
+        </SpatialNavigationScrollView>
+      </DefaultFocus>
+    </Page>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    height: "100vh",
+    width: "100vw",
     backgroundColor: "#1c1c1c",
   },
   header: {
@@ -110,12 +127,14 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     position: "absolute",
-    bottom: 50,
-    left: 0,
+    bottom: -400,
+    left: 20,
     right: 0,
+    paddingVertical: 20,
   },
-  listContent: {
-    padding: 16,
+  list: {
+    height: 300,
+    width: "100%",
   },
   itemContainer: {
     padding: 16,
