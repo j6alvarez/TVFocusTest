@@ -33,6 +33,9 @@
     "slug": "TVFocusTest",
     "android": {
       "package": "com.anonymous.TVFocusTest"
+    },
+    "ios": {
+      "bundleIdentifier": "com.anonymous.TVFocusTest"
     }
   }
 }

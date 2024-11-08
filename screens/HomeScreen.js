@@ -145,8 +145,10 @@ const HomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    height: "100vh",
-    width: "100vw",
+    height: "80%",
+    width: "80%",
+    right:0,
+    marginLeft: 400,
     backgroundColor: "#1c1c1c",
   },
   header: {

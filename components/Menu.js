@@ -6,10 +6,14 @@ import {
   SpatialNavigationView,
   SpatialNavigationScrollView,
   SpatialNavigationFocusableView,
+  SpatialNavigationNode,
+  SpatialNavigationVirtualizedList,
+  SpatialNavigationVirtualizedGrid
 } from "react-tv-space-navigation";
 import { useMenuContext } from "./Menu/MenuContext";
 import { useKey } from "../hooks/useKey";
 import { SupportedKeys } from "./remote-control/SupportedKeys";
+import { useLockOverlay } from "../hooks/useLockOverlay";
 
 const Menu = ({ navigation }) => {
   const { toggleMenu: setIsMenuOpen, isOpen: isMenuOpen } = useMenuContext();
@@ -17,11 +21,11 @@ const Menu = ({ navigation }) => {
     (movement) => {
       if (movement === "right") {
         setIsMenuOpen(false);
-        navigation.navigate("Home");
       }
     },
     [setIsMenuOpen]
   );
+  useLockOverlay(isMenuOpen, setIsMenuOpen);
 
   const closeMenu = () => {
     setIsMenuOpen(false);
@@ -29,73 +33,93 @@ const Menu = ({ navigation }) => {
 
   useKey(SupportedKeys.Back, closeMenu);
 
+  if(!isMenuOpen){
+    return <></>
+  }
+
   console.log("Menu", { isMenuOpen });
   return (
     <SpatialNavigationRoot
-      isActive={isMenuOpen}
       onDirectionHandledWithoutMovement={onDirectionHandledWithoutMovement}
     >
-      <View style={[StyleSheet.absoluteFillObject, styles.menuContainer]}>
-        <SpatialNavigationScrollView>
+
+        <SpatialNavigationFocusableView >
+        <View style={[StyleSheet.absoluteFillObject, styles.menuContainer]}>
+      
           <View style={styles.menu}>
             <DefaultFocus>
-              <SpatialNavigationFocusableView
+              <SpatialNavigationNode
+                isFocusable
                 onSelect={() => console.log("Sign In pressed")}
-                focusable={true}
-              >
-                {({ isFocused }) => (
-                  <View
+                >
+                {({ isFocused }) => {
+                  
+                  console.log('isFocusedSignIn', isFocused)
+                  return(
+                    <View
                     style={[
                       styles.menuItem,
-                      isFocused && styles.menuItemFocused,
-                    ]}
+                    isFocused && styles.menuItemFocused,
+                  ]}
                   >
                     <Text style={[styles.menuText]}>Sign In</Text>
                   </View>
-                )}
-              </SpatialNavigationFocusableView>
-            </DefaultFocus>
+                )}}
+              </SpatialNavigationNode>
+              </DefaultFocus>
+            
 
-            <SpatialNavigationFocusableView
+            <SpatialNavigationNode
+            isFocusable
               onSelect={() => {
                 navigation.navigate("Home");
                 setIsMenuOpen(false);
               }}
-              focusable={true}
-            >
-              {({ isFocused }) => (
+              >
+              {({ isFocused }) => {
+                console.log('isFocusedHome')
+                return(
                 <View
-                  style={[styles.menuItem, isFocused && styles.menuItemFocused]}
+                style={[styles.menuItem, isFocused && styles.menuItemFocused]}
                 >
                   <Text style={[styles.menuText]}>Home</Text>
                 </View>
-              )}
-            </SpatialNavigationFocusableView>
+              )}}
+            </SpatialNavigationNode>
 
-            <SpatialNavigationFocusableView
+            
+            <SpatialNavigationNode
               onSelect={() => console.log("Library")}
-              focusable={true}
-            >
-              {({ isFocused }) => (
+             isFocusable
+              >
+              {({ isFocused }) => {
+                  console.log('isFocusedLibrary')
+                return(
                 <View
-                  style={[styles.menuItem, isFocused && styles.menuItemFocused]}
+                style={[styles.menuItem, isFocused && styles.menuItemFocused]}
                 >
                   <Text style={[styles.menuText]}>My Library</Text>
                 </View>
-              )}
-            </SpatialNavigationFocusableView>
+              )}}
+            </SpatialNavigationNode>
+           
           </View>
-        </SpatialNavigationScrollView>
-      </View>
+          </View>
+        </SpatialNavigationFocusableView>
     </SpatialNavigationRoot>
   );
 };
 
 const styles = StyleSheet.create({
   menuContainer: {
-    flex: 1,
-    paddingTop: 50,
-    paddingHorizontal: 20,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: '100%',
+    height: '100%',
+    zIndex: 10,
   },
   menu: {
     position: "absolute",
@@ -106,6 +130,17 @@ const styles = StyleSheet.create({
     backgroundColor: "grey",
     zIndex: 10,
     borderRadius: 5,
+  },
+  buttonContainer: {
+    display: "flex",
+    marginLeft: 50,
+    marginTop: "20%",
+    flexDirection: "row",
+    gap: 20,
+  },
+  list: {
+    height: 300,
+    width: "100%",
   },
   menuItem: {
     paddingVertical: 15,

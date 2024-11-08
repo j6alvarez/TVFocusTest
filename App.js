@@ -50,8 +50,8 @@ const App = () => {
               }}
             >
               <>
-                <Stack.Group>
-                  <Stack.Group key="menu">
+                {/* <Stack.Group> */}
+                  {/* <Stack.Group key="menu">
                     <Stack.Screen
                       name="Menu"
                       options={{ presentation: "transparentModal" }}
@@ -60,13 +60,16 @@ const App = () => {
                         return <Menu {...props} />;
                       }}
                     </Stack.Screen>
-                  </Stack.Group>
+                  </Stack.Group> */}
                   <Stack.Screen name="Home">
                     {(props) => {
-                      return <HomeScreen {...props} />;
+                      return <>
+                      <HomeScreen {...props} />
+                      </>
+                      ;
                     }}
                   </Stack.Screen>
-                </Stack.Group>
+                {/* </Stack.Group> */}
                 <Stack.Screen name="Details">
                   {(props) => (
                     <SpatialNavigationRoot>
